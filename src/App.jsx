@@ -180,7 +180,7 @@ function App() {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center h-screen">
+      <div className="flex flex-col justify-center items-center h-screen mt-[-4rem]">
         <div className="flex flex-col justify-center items-center">
           <p className="font-medium mb-3 text-2xl">
             Global Elevator
