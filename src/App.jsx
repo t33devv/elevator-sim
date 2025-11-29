@@ -180,31 +180,61 @@ function App() {
 
   return (
     <>
-      <div className="flex flex-col justify-center items-center h-screen mt-[-4rem]">
+      <div className="flex flex-col justify-center items-center h-screen mt-[-3rem]">
         <div className="flex flex-col justify-center items-center">
           <p className="font-medium mb-3 text-2xl">
-            Global Elevator
+            Global Elevator System
           </p>
           <p className="">
-            <span className="italic">Everyone in the world</span> shares this elevator.
+            <span className="italic">Everyone in the world</span> shares these 2 elevators.
           </p>
         </div>
         <div>
-          <div className="mt-10 shadow-[0_0_3px_rgba(0,0,0,0.2)] rounded-2xl h-[25rem] w-[35rem] flex flex-col justify-center items-center">
-            <div className="bg-black h-[15rem] w-[30rem] rounded-2xl flex flex-col justify-center items-center">
-              <div>
-                <p className="text-[7rem] text-white">
-                  1
-                </p>
+          <div className="mt-[6rem] h-[25rem] flex flex-col justify-center items-center">
+            <div className="flex flex-row gap-10 shadow-[0_0_3px_rgba(0,0,0,0.2)] rounded-2xl w-[37rem] h-[21rem] justify-center items-center">
+              <div className="flex items-center justify-center flex-col">
+                <div className="bg-gray-200 rounded-2xl py-[0.5rem] px-[1rem] mb-[1rem] mt-[2rem]">
+                  <p className="">
+                    Elevator 1:
+                  </p>
+                </div>
+                <div className="bg-black h-[15rem] w-[15rem] rounded-2xl flex flex-col justify-center items-center mb-[2rem]">
+                  <div>
+                    <p className="text-[7rem] text-white">
+                      1
+                    </p>
+                  </div>
+                  <div>
+                    <p className="uppercase text-white text-gray-500 mb-8">
+                      waiting
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="uppercase text-white text-gray-500 mb-8">
-                  waiting
-                </p>
+              
+              <div className="flex items-center justify-center flex-col">
+                <div className="bg-gray-200 rounded-2xl py-[0.5rem] px-[1rem] mb-[1rem] mt-[2rem]">
+                  <p className="">
+                    Elevator 2:
+                  </p>
+                </div>
+                <div className="bg-black h-[15rem] w-[15rem] rounded-2xl flex flex-col justify-center items-center mb-[2rem]">
+                  <div>
+                    <p className="text-[7rem] text-white">
+                      5
+                    </p>
+                  </div>
+                  <div>
+                    <p className="uppercase text-white text-gray-500 mb-8">
+                      waiting
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div>
-              <button className="w-[30rem] h-[3.5rem] bg-black rounded-2xl mt-8 hover:bg-gray-900 transition-colors duration-150" onClick={openModal}>
+            
+            <div className="flex gap-10 shadow-[0_0_3px_rgba(0,0,0,0.2)] rounded-2xl w-[37rem] h-[7rem] justify-center items-center mt-6">
+              <button className="w-[32.5rem] h-[3.5rem] bg-black rounded-2xl mt-8 hover:bg-gray-900 transition-colors duration-150 mb-[2rem]" onClick={openModal}>
                 <p className="text-white text-md">
                   Make a Request
                 </p>
@@ -213,7 +243,7 @@ function App() {
           </div>
         </div>
         <div>
-          <p className="text-[0.8rem] mt-10 text-gray-600">
+          <p className="text-[0.8rem] mt-[5rem] text-gray-600">
             Click to request the elevator
           </p>
         </div>
