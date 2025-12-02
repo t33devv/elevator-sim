@@ -1,6 +1,46 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { io } from 'socket.io-client'
 
 const TOTAL_FLOORS = 10
+
+const Notification = ({ notification, onRemove }) => {
+  const [isExiting, setIsExiting] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsExiting(true)
+      setTimeout(() => onRemove(notification.id), 300) // Wait for fade animation
+    }, 5000)
+
+    return () => clearTimeout(timer)
+  }, [notification.id, onRemove])
+
+  return (
+    <div className={`bg-white rounded-lg shadow-lg p-4 mb-3 border border-gray-200 transition-all duration-300 ${
+      isExiting ? 'opacity-0 translate-x-full' : 'animate-slide-in opacity-100'
+    }`}>
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <p className="font-medium text-gray-900 text-sm">
+            {notification.type === 'request' ? '📋 New Request' : '✅ Request Fulfilled'}
+          </p>
+          <p className="text-gray-600 text-sm mt-1">
+            {notification.message}
+          </p>
+        </div>
+        <button
+          onClick={() => {
+            setIsExiting(true)
+            setTimeout(() => onRemove(notification.id), 300)
+          }}
+          className="text-gray-400 hover:text-gray-600 ml-3"
+        >
+          ×
+        </button>
+      </div>
+    </div>
+  )
+}
 
 const Modal = ({ isOpen, onClose, onSubmit }) => {
   const [currentFloor, setCurrentFloor] = useState(1)
@@ -168,15 +208,80 @@ const Modal = ({ isOpen, onClose, onSubmit }) => {
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const [elevators, setElevators] = useState([
+    { id: 1, currentFloor: 1, status: 'idle', direction: 'none', queueLength: 0 },
+    { id: 2, currentFloor: 5, status: 'idle', direction: 'none', queueLength: 0 }
+  ])
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const newSocket = io('http://localhost:3000');
+
+    newSocket.on('connect', () => {
+      console.log('connecetd to server')
+    })
+
+    newSocket.on('disconnect', () => {
+      console.log('diconnected from server')
+    })
+
+    newSocket.on('elevatorStateUpdate', (data) => {
+      console.log('Elevator state update: ' + data);
+      setElevators(data.elevators);
+    })
+
+    // NEW: Listen for request confirmation
+    newSocket.on('requestReceived', (data) => {
+      addNotification('request', `Floor ${data.fromFloor} → Floor ${data.toFloor}`);
+    })
+
+    // NEW: Listen for request fulfillment
+    newSocket.on('requestFulfilled', (data) => {
+      addNotification('fulfilled', `Elevator ${data.elevatorId} completed: Floor ${data.fromFloor} → Floor ${data.toFloor}`);
+    })
+
+    setSocket(newSocket)
+
+    return () => {
+      newSocket.close();
+    }
+  }, [])
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const handleSubmitRequest = (request) => {
     console.log('Request submitted:', request)
-    // TODO: Emit to WebSocket server
-    // socket.emit('requestElevator', request)
+    
+    if (socket) {
+      socket.emit('elevatorRequest', request);
+    }
   }
+
+  const getStatusText = (elevator) => {
+    if (elevator.status === 'idle') return 'Waiting';
+    if (elevator.status === 'loading') return 'Door Action';
+    if (elevator.status === 'moving') {
+      if (elevator.direction === 'up') return 'Going up';
+      if (elevator.direction === 'down') return 'Going down';
+    }
+    return elevator.status;
+  }
+
+  const addNotification = (type, message) => {
+    const notification = {
+      id: Date.now() + Math.random(), // Unique ID
+      type,
+      message,
+      timestamp: Date.now()
+    }
+    setNotifications(prev => [notification, ...prev])
+  }
+
+  const removeNotification = useCallback((id) => {
+    setNotifications(prev => prev.filter(n => n.id !== id))
+  }, [])
 
   return (
     <>
@@ -201,12 +306,12 @@ function App() {
                 <div className="bg-black h-[15rem] w-[15rem] rounded-2xl flex flex-col justify-center items-center mb-[2rem]">
                   <div>
                     <p className="text-[7rem] text-white">
-                      1
+                      {elevators[0].currentFloor}
                     </p>
                   </div>
                   <div>
                     <p className="uppercase text-white text-gray-500 mb-8">
-                      waiting
+                      {getStatusText(elevators[0])}
                     </p>
                   </div>
                 </div>
@@ -221,12 +326,12 @@ function App() {
                 <div className="bg-black h-[15rem] w-[15rem] rounded-2xl flex flex-col justify-center items-center mb-[2rem]">
                   <div>
                     <p className="text-[7rem] text-white">
-                      5
+                      {elevators[1].currentFloor}
                     </p>
                   </div>
                   <div>
                     <p className="uppercase text-white text-gray-500 mb-8">
-                      waiting
+                      {getStatusText(elevators[1])}
                     </p>
                   </div>
                 </div>
@@ -242,9 +347,12 @@ function App() {
             </div>
           </div>
         </div>
-        <div>
-          <p className="text-[0.8rem] mt-[5rem] text-gray-600">
+        <div className="flex justify-center flex-col">
+          <p className="text-[0.8rem] mt-[5rem] text-gray-600 text-center">
             Click to request the elevator
+          </p>
+          <p className="text-[0.65rem] mt-[2rem] text-gray-600 text-center">
+            (fun fact: this uses the world's *fastest* 2-elevator algorithm)
           </p>
         </div>
 
@@ -257,6 +365,15 @@ function App() {
         )}
       </div>
       
+      <div className="fixed bottom-4 right-4 w-80 max-h-[80vh] overflow-y-auto z-50">
+        {notifications.map(notification => (
+          <Notification
+            key={notification.id}
+            notification={notification}
+            onRemove={removeNotification}
+          />
+        ))}
+      </div>
     </>
   )
 }
