@@ -216,7 +216,7 @@ function App() {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3000');
+    const newSocket = io('https://elevator-sim-backend.onrender.com');
 
     newSocket.on('connect', () => {
       console.log('connecetd to server')
