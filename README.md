@@ -51,25 +51,7 @@ The system uses a smart scheduling algorithm that:
 
 ---
 
-### System Design
-
-┌─────────────┐     WebSocket     ┌─────────────┐
-│ Frontend │  ◄─────────────────► │ Backend │
-│ (React) │ elevatorRequest │ (Express) │
-│ │ stateUpdate │ │
-└─────────────┘    notifications    └─────────────┘
-│
-▼
-┌───────────────┐
-│ Elevator │
-│ Controller │
-└───────────────┘
-│
-┌───────┴───────┐
-▼ ▼
-┌──────────┐ ┌──────────┐
-│Elevator 1│ │Elevator 2│
-└──────────┘ └──────────┘
+<img width="449" height="437" alt="Screenshot 2025-12-03 at 1 21 31 PM" src="https://github.com/user-attachments/assets/34ae2068-c12b-4b8f-8e5a-d23a888c8064" />
 
 ---
 
