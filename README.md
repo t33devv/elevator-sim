@@ -55,31 +55,7 @@ The system uses a smart scheduling algorithm that:
 
 ---
 
-### Project Structure
-
-elevator-sim/
-├── elevator-sim-frontend/
-│   ├── src/
-│   │   ├── App.jsx              # Main UI component
-│   │   ├── main.jsx             # Entry point
-│   │   └── index.css            # Global styles
-│   ├── package.json
-│   └── vite.config.js
-│
-└── elevator-sim-backend/
-    ├── src/
-    │   ├── models/
-    │   │   └── Elevator.js              # Elevator logic
-    │   ├── controllers/
-    │   │   └── ElevatorController.js    # Multi-elevator management
-    │   ├── services/
-    │   │   ├── BotService.js            # Automated requests
-    │   │   └── KeepAliveService.js      # Server keep-alive
-    │   ├── utils/
-    │   │   └── constants.js             # Configuration
-    │   └── app.js                       # WebSocket handlers
-    ├── server.js                        # Express server
-    └── package.json
+<img width="592" height="587" alt="Screenshot 2025-12-03 at 1 22 07 PM" src="https://github.com/user-attachments/assets/16ea90c9-c080-4ca3-8148-c79c7decd1c9" />
 
 ---
 
